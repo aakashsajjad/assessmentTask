@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .bg-div {
+        background-color: chartreuse;
+    }
+</style>
+
+<body class="bg-div">
+
+    <h1>Your Shopping Cart</h1>
+    <h2>Cart Items</h2>
+    <ul id="cart-list"></ul>
+    <p id="total-price">Total Price: $<span id="total-price-value">0</span></p>
+
+    <button id="addtocart">Add to Cart</button>
+    <p id="demo"></p>
+
+    <script>
+        function Product(name, price) {
+            this.name = name;
+            this.price = price;
+            this.quantity = 0;
+        }
+
+        var cart = {};
+        var countList = 0;
+
+        document.getElementById('addtocart').addEventListener('click', () => {
+            addDataToCart("Product1"+(Math.floor(Math.random()*100)+1), Math.floor(Math.random()*50)+1);
+        });
+
+        function addDataToCart(productName, price) {
+            let quantity = prompt("Please enter the quantity for " + productName + ":");
+            if (quantity && /^[1-9]\d*$/.test(quantity)) {
+                let product = new Product(productName, price);
+                product.quantity = parseInt(quantity);
+                if (cart[productName]) {
+                    cart[productName].quantity += product.quantity;
+                } else {
+                    cart[productName] = product;
+                }
+                updateTotal();
+            } else {
+                alert("Invalid quantity! Please enter a valid number.");
+            }
+        }
+
+        function removeItem(productName) {
+            delete cart[productName];
+            updateTotal();
+        }
+
+        function updateTotal() {
+            let cartItems = document.getElementById('cart-list');
+            let totalSpan = document.getElementById('total-price-value');
+            let total = 0;
+
+            cartItems.innerHTML = '';
+            for (let product in cart) {
+                let li = document.createElement("li");
+                li.textContent = cart[product].name + " - $" + cart[product].price + " x " + cart[product].quantity;
+
+                //remove part
+                let removeBtn = document.createElement("button");
+                removeBtn.textContent = "Remove";
+                removeBtn.onclick = function () {
+                    removeItem(product);
+                };
+                li.appendChild(removeBtn);
+                cartItems.appendChild(li);
+                total += cart[product].price * cart[product].quantity;
+            }
+            totalSpan.textContent = total.toFixed(2);
+        }
+    </script>
+
+</body>
+
+</html>
